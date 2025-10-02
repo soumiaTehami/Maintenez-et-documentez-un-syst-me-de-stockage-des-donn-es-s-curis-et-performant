@@ -1,0 +1,23 @@
+services:
+  mongo:
+    image: mongo:7.0
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  migration:
+    build: .
+    container_name: migration
+    depends_on:
+      - mongo
+    volumes:
+      - ./migrate.py:/app/migrate.py
+      - ./archive/healthcare_dataset.csv:/app/data.csv
+    environment:
+      - MONGO_HOST=mongo
+      - MONGO_PORT=27017
+
+volumes:
+  mongo_data:
